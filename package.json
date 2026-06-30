@@ -1,0 +1,26 @@
+{
+  "name": "saucedemo-playwright",
+  "version": "1.0.0",
+  "description": "Playwright E2E tests for Sauce Demo checkout flow",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:chromium": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:checkout": "playwright test tests/checkout.spec.ts",
+    "test:negative": "playwright test tests/negative.spec.ts",
+    "report": "playwright show-report",
+    "install:browsers": "playwright install --with-deps"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^26.0.1",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

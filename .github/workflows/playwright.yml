@@ -1,0 +1,50 @@
+name: Playwright E2E Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Playwright Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Playwright browser binaries and OS dependencies
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Run Playwright tests (${{ matrix.browser }})
+        run: npx playwright test --project=${{ matrix.browser }}
+        env:
+          CI: true
+
+      - name: Upload test report and artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30
