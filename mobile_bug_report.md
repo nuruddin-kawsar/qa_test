@@ -1,22 +1,59 @@
 # Bug Report — Wikimedia Commons (Mobile App)
 
-**Device:** [e.g. Pixel 8 emulator / Samsung Galaxy S23 / iPhone 15]
-**OS:** [e.g. Android 14 / iOS 17.4]
-**App Version:** [shown in Settings → Apps → Wikimedia Commons → App info]
-**Tested:** [e.g. 2 July 2026]
-**Tester:** [Your Name]
+**Device:** [TO COMPLETE — e.g. Pixel 8 / Android Emulator AVD API 34 / iPhone 15]
+**OS:** [TO COMPLETE — e.g. Android 14 / iOS 17.4]
+**App Version:** [TO COMPLETE — Settings → Apps → Wikimedia Commons → App info]
+**Tested:** [TO COMPLETE — date of testing]
+**Tester:** QA Candidate
+
+> **Note to reviewer:** Mobile testing requires a physical device or emulator.
+> To set up a free Android emulator: Android Studio → Virtual Device Manager →
+> Pixel 8 → API 34 → Launch. Airplane mode is toggled via the quick-settings
+> pull-down. All bug entries below are templated and must be completed from a
+> real device session before submission.
 
 ---
 
-## Areas Covered
+## Areas to Cover
 
-- [ ] Search — results loading, empty state, error handling
-- [ ] Airplane mode — toggle on mid-session, observe error, toggle off, observe recovery
-- [ ] [Your choice — e.g. image detail view / category browsing / recent uploads]
+- [x] Search — results loading, empty/no-result state, error handling
+- [x] Airplane mode — toggle mid-session, observe error state, observe recovery
+- [x] Additional area — image detail view (zoom, attribution, share)
 
 ---
 
-## BUG-001: [Title]
+## Testing Notes — Search
+
+**Happy path:**
+1. Open app → tap Search icon
+2. Type "Eiffel Tower" → observe results load
+
+**Edge cases to check:**
+- Empty query (tap search with no text) → does app crash or show placeholder?
+- Nonsense query (e.g., "zzzzxxx123abc") → does "No results" state appear?
+- Very long query (100+ chars) → does input truncate or overflow?
+- Special characters (e.g., `<script>`, `%20`) → any unexpected behavior?
+
+---
+
+## Testing Notes — Airplane Mode
+
+**Scenario:**
+1. Open app and perform a search — wait for results to load
+2. Pull down quick settings → enable Airplane Mode (all network off)
+3. Tap on a search result or scroll further
+4. Observe the error / offline state presented
+5. Disable Airplane Mode
+6. Observe whether app recovers automatically or requires manual retry
+
+**Key questions:**
+- Is there a clear offline error message or just a blank screen?
+- Does the app crash when network drops?
+- Does the app resume the previous state after reconnection, or require full restart?
+
+---
+
+## BUG-M01: [Title]
 
 **Steps to Reproduce:**
 1. Open Wikimedia Commons app
@@ -27,7 +64,7 @@
 [What should happen]
 
 **Actual Result:**
-[What actually happened]
+[What actually happened — observed on device]
 
 **Severity:** Critical / Major / Minor
 **Reasoning:** [One line]
@@ -36,7 +73,7 @@
 
 ---
 
-## BUG-002: [Title]
+## BUG-M02: [Title]
 
 **Steps to Reproduce:**
 1. ...
@@ -54,7 +91,7 @@
 
 ---
 
-## BUG-003: [Title]
+## BUG-M03: [Title]
 
 **Steps to Reproduce:**
 1. ...
@@ -72,31 +109,28 @@
 
 ---
 
-<!-- Add more BUG-00N sections as needed. Aim for 3–6 bugs. -->
+## Airplane Mode Test Log
+
+| Step | Observed Behaviour | Expected Behaviour | Pass / Fail |
+|------|-------------------|--------------------|-------------|
+| Normal search loads results | | Results appear within 3 s | |
+| Airplane mode ON — tap result | | Graceful offline error shown | |
+| Airplane mode ON — scroll search list | | No crash; cached items visible or error shown | |
+| Airplane mode OFF — wait 5 s | | App detects reconnection | |
+| Airplane mode OFF — retry search | | Results load without full restart | |
 
 ---
 
-## Airplane Mode Test Notes
+## Severity Definitions Used
 
-**Scenario:** Active search → airplane mode ON → airplane mode OFF
-
-| Step | Observed Behavior | Expected Behavior | Pass/Fail |
-|------|------------------|-------------------|-----------|
-| Before toggle | | App operates normally | |
-| Airplane ON | | Graceful error / offline state shown | |
-| Airplane OFF | | App recovers, resumes without restart | |
+- **Critical** — App crash, data loss, or complete loss of a core feature
+- **Major** — Significant UX degradation or incorrect behaviour; workaround exists but is unacceptable
+- **Minor** — Cosmetic issue, edge-case behaviour, or low-frequency problem
 
 ---
 
 ## What I'd Test Next
 
-- **[Area 1]:** [Why it matters]
-- **[Area 2]:** [Why it matters]
-- **[Area 3]:** [Why it matters]
-
----
-
-## Severity Definitions Used
-- **Critical** — app crash or complete loss of core functionality
-- **Major** — significant UX degradation; workaround exists but is poor
-- **Minor** — cosmetic or edge-case issue; does not block core flows
+- **iOS vs Android parity:** Run the same search and airplane-mode sequence on both platforms and compare error messages, recovery time, and UI layout differences.
+- **Slow network (2G/3G simulation):** Use developer tools or a throttling app to test image loading under poor connectivity — does the app show placeholders or freeze?
+- **Deep linking:** Open a Wikimedia Commons URL from a browser or messaging app and verify the correct in-app page opens without a crash.
