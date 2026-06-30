@@ -48,3 +48,50 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 30
+
+  mobile-test:
+    name: Run Mobile Playwright Tests (Wikimedia Commons)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # iPhone 14 emulation uses the WebKit browser engine
+          - project: wikimedia-iphone
+            browser: webkit
+          # Pixel 5 emulation uses the Chromium browser engine
+          - project: wikimedia-pixel
+            browser: chromium
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Playwright browser binaries and OS dependencies
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Run Wikimedia Commons mobile tests (${{ matrix.project }})
+        run: npx playwright test --project=${{ matrix.project }}
+        env:
+          CI: true
+
+      - name: Upload test report and artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-${{ matrix.project }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30

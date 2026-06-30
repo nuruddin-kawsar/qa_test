@@ -37,7 +37,8 @@ Cart badge does not change. The button label stays as "Add to Cart". The item is
 **Severity:** Critical
 **Reasoning:** 50% of catalogue is unbuyable for any user logging in as `problem_user`; blocks core purchase flow.
 
-**Evidence:** `screenshots/bug-005-problem-user-add-to-cart.png`
+**Evidence:**
+![Add to Cart non-functional for problem_user](screenshots/bug-005-problem-user-add-to-cart.png)
 
 ---
 
@@ -62,7 +63,9 @@ The Last Name field visually shows "Doe" as typed, but its value is silently dis
 **Severity:** Critical
 **Reasoning:** Checkout is entirely blocked for `problem_user`; no workaround without switching user accounts.
 
-**Evidence:** `screenshots/bug-010-problem-user-checkout-error.png`
+**Evidence:**
+![Checkout form with Last Name filled in](screenshots/bug-009-problem-user-checkout-form.png)
+![Error: Last Name is required banner](screenshots/bug-010-problem-user-checkout-error.png)
 
 ---
 
@@ -81,7 +84,8 @@ All 6 products display the same broken placeholder image (`/static/media/sl-404.
 **Severity:** Major
 **Reasoning:** Customers cannot visually identify products; significantly reduces purchase confidence and could lead to wrong-item orders.
 
-**Evidence:** `screenshots/bug-003-problem-user-broken-images.png`
+**Evidence:**
+![All 6 products showing broken placeholder image](screenshots/bug-003-problem-user-broken-images.png)
 
 ---
 
@@ -103,7 +107,8 @@ Product order is unchanged — "Sauce Labs Backpack" remains first. Confirmed by
 **Severity:** Major
 **Reasoning:** Broken sorting impairs product discovery; customers relying on alphabetical sort get incorrect results without any error indication.
 
-**Evidence:** `screenshots/bug-004-problem-user-sort-broken.png`
+**Evidence:**
+![Sort Z to A has no effect on product order](screenshots/bug-004-problem-user-sort-broken.png)
 
 ---
 
@@ -123,7 +128,8 @@ Login took **5,076 ms** (5.1 seconds) as measured from the moment "Login" was cl
 **Severity:** Major
 **Reasoning:** A 5+ second login with no visual feedback creates a poor user experience and may cause users to believe the site is broken and abandon the session.
 
-**Evidence:** `screenshots/bug-002-perf-glitch-login.png`
+**Evidence:**
+![5076 ms login delay for performance_glitch_user](screenshots/bug-002-perf-glitch-login.png)
 
 ---
 
@@ -143,7 +149,8 @@ The error message reads: "Epic sadface: Sorry, this user has been locked out." w
 **Severity:** Minor
 **Reasoning:** The lockout itself is expected behaviour; however, the absence of any recovery guidance is a UX gap that would frustrate legitimate users who have been mistakenly locked out.
 
-**Evidence:** `screenshots/bug-001-locked-out-user.png`
+**Evidence:**
+![Locked out error with no recovery guidance](screenshots/bug-001-locked-out-user.png)
 
 ---
 
@@ -163,7 +170,8 @@ The browser navigates to `https://saucelabs.com/` in the same tab, fully replaci
 **Severity:** Minor
 **Reasoning:** Unexpected navigation away from the app mid-session could cause loss of cart contents; a simple `target="_blank"` or in-app page would prevent this.
 
-**Evidence:** `screenshots/bug-008-hamburger-menu.png`
+**Evidence:**
+![About link navigating away from app in same tab](screenshots/bug-008-hamburger-menu.png)
 
 ---
 
