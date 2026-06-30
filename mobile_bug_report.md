@@ -131,6 +131,14 @@
 
 ## What I'd Test Next
 
-- **iOS vs Android parity:** Run the same search and airplane-mode sequence on both platforms and compare error messages, recovery time, and UI layout differences.
-- **Slow network (2G/3G simulation):** Use developer tools or a throttling app to test image loading under poor connectivity — does the app show placeholders or freeze?
-- **Deep linking:** Open a Wikimedia Commons URL from a browser or messaging app and verify the correct in-app page opens without a crash.
+Prioritised by platform risk, highest first.
+
+1. **iOS vs Android behavioural parity on the same scenarios** — Mobile apps often have platform-specific failure modes that only appear when you run identical steps on both OS. For Wikimedia Commons specifically I would repeat the airplane-mode sequence on both platforms and compare: (a) the exact wording and timing of the offline error message, (b) whether the iOS swipe-back gesture during a failed image load behaves differently from the Android hardware back button, and (c) whether the app requires a full restart after reconnection on one platform but auto-recovers on the other. Any difference is a parity bug that should be filed even if neither platform crashes.
+
+2. **Interruption and background recovery** — Mobile users get interrupted constantly. I would test: incoming phone call while a search is loading (does the app resume the request or silently fail?), pressing the Home button mid-image-upload and returning after 30 seconds, and locking the screen during a search. The key assertion is that the app either resumes the in-flight operation or presents a clear retry option — a blank or frozen screen on return is a Major bug.
+
+3. **Orientation change mid-flow** — Rotate the device from portrait to landscape while viewing a search results list and while viewing an image detail page. Verify that the layout reflows without clipping text, the scroll position is maintained, and the app does not restart the current request. This is a common source of crashes in React Native and similar frameworks that don't handle `onConfigurationChanged` correctly.
+
+4. **Accessibility font size and display settings** — Go to OS Settings → Accessibility → increase text size to the largest setting, then search for an item and open an image detail. Verify that labels, captions, and attribution text do not overflow their containers or get clipped. Repeat with Bold Text enabled on iOS. These settings affect a large percentage of users over 40 and are rarely tested on mobile.
+
+5. **Offline-first cache and stale content** — After a successful search, enable airplane mode and pull-to-refresh. The expected behaviour is that cached results remain visible with a clear "You are offline — showing cached results" banner, not a blank screen. If the app clears results on a failed refresh, that is a data-loss regression. Also verify that cached images are served from disk (no repeated network requests for the same asset) — this matters for users on metered mobile data plans.

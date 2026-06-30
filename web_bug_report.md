@@ -169,8 +169,14 @@ The browser navigates to `https://saucelabs.com/` in the same tab, fully replaci
 
 ## What I'd Test Next
 
-- **Session persistence:** Verify that the cart contents survive a page refresh and browser back-button navigation — important for accidental reloads during checkout.
-- **Reset App State:** Confirm the "Reset App State" menu option actually clears the cart and resets product button labels; then repeat the full checkout to check for ghost state.
-- **Keyboard and accessibility:** Tab through the login form and checkout flow with no mouse — verify focus order, label associations, and that error messages are announced by screen readers (`aria-live`).
-- **Cross-browser checkout:** Run the full checkout for `standard_user` on Firefox and WebKit (Safari) to surface any CSS layout bugs or JS compatibility issues not visible in Chromium.
-- **Network degradation:** Simulate 3G throttling during checkout step 2 → finish — verify the confirmation page loads correctly and the order is not double-submitted on retry.
+Prioritised by risk to real users, highest first.
+
+1. **problem_user regression sweep after bug fixes** — BUG-001 through BUG-004 are all concentrated in `problem_user`. Once those are patched, I would re-run the full inventory → cart → checkout flow for every one of the six products to confirm the fixes didn't silently break the three products that currently work. I'd also cross-check that the sort Z→A and the Last Name field retain correct behaviour after the React state handlers are fixed, because those fixes could have side-effects on other fields or sort options.
+
+2. **Cart and order-total data integrity** — The checkout blockage in BUG-002 suggests the cart-to-checkout data pipeline has state-management issues. With more time I would add multiple different items, remove some, add again, and verify the subtotal, tax, and total are recalculated correctly at every step. I'd specifically test: remove one item from a two-item cart and confirm the badge, subtotal, and tax all update; then proceed to confirmation and verify the receipt total matches the pre-checkout total exactly.
+
+3. **Security basics on input fields** — The First Name, Last Name, and Postal Code fields on checkout accept free text with no visible sanitisation. I would test `<script>alert(1)</script>` and `'; DROP TABLE orders; --` in each field to check for XSS reflection and error leakage. Additionally, the login error messages differ between `locked_out_user` ("Sorry, this user has been locked out") and a completely unknown user ("do not match any user") — this is a form of account enumeration and worth flagging to the security team.
+
+4. **Session state and "Reset App State"** — I would test whether the cart persists across a hard page refresh (F5) and after using the browser back button from the confirmation page. I'd also exercise "Reset App State" from the hamburger menu and verify it actually clears the cart badge, resets all "Remove" buttons back to "Add to Cart", and does not leave ghost items in cart.html. These are common sources of flaky bugs in single-page applications.
+
+5. **Accessibility — keyboard-only and screen-reader flow** — Tab through login → inventory → cart → checkout using only the keyboard (no mouse) and verify focus order is logical, all interactive elements are reachable, and error messages like "Error: First Name is required" are announced by a screen reader via `aria-live` or `role="alert"`. This is both a legal compliance concern and a real usability gap if the tab order skips the error banner.
